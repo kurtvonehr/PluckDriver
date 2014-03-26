@@ -1,0 +1,66 @@
+/*
+  Pluck Driver
+  Drives a SN754410 H-Bridge driver, which controls a DC 
+  motor to pluck piezo cantilever
+*/
+ 
+// Pin 13 has an LED connected on most Arduino boards.
+// give it a name:
+int FORWARD = 3;
+int REVERSE = 5;
+int triggerOnce = 8;
+int triggerSimulation = 10;
+boolean direction = true;
+boolean oneTimeOnce = true;
+boolean oneTimeSim = true;
+
+// the setup routine runs once when you press reset:
+void setup() {                
+  // initialize the digital pin as an output.
+  pinMode(FORWARD, OUTPUT);              // set pin to input
+  pinMode(REVERSE, OUTPUT);              // set pin to input
+  pinMode(triggerOnce, INPUT);           // set pin to input
+  pinMode(triggerSimulation, INPUT);           // set pin to input
+  digitalWrite(triggerOnce, HIGH);       // turn on pullup resistors
+  digitalWrite(triggerSimulation, HIGH);       // turn on pullup resistors
+    
+}
+
+// the loop routine runs over and over again forever:
+void loop() {
+  
+  if(digitalRead(triggerOnce) == HIGH && oneTimeOnce){
+    if(direction){
+      digitalWrite(FORWARD, HIGH);   // turn the LED on (HIGH is the voltage level)
+      delay(200);                     // wait for 200ms
+      digitalWrite(FORWARD, LOW);    // turn the LED off by making the voltage LOW
+    }
+    else{
+      digitalWrite(REVERSE, HIGH);     // turn the LED on (HIGH is the voltage level)
+      delay(200);                     // wait for 200ms
+      digitalWrite(REVERSE, LOW);    // turn the LED off by making the voltage LOW
+    }
+    direction = !direction;
+    oneTimeOnce = false;
+  }
+  
+  if(digitalRead(triggerOnce) == LOW)
+    oneTimeOnce = true;
+  
+  if(digitalRead(triggerSimulation) == HIGH && oneTimeSim){
+    for(int i = 0; i<15; i++){
+      digitalWrite(FORWARD, HIGH);   // turn the LED on (HIGH is the voltage level)
+      delay(800);  
+      digitalWrite(FORWARD, LOW);   // turn the LED on (HIGH is the voltage level) 
+      delay(1000); 
+      digitalWrite(REVERSE, HIGH);   // turn the LED on (HIGH is the voltage level)
+      delay(800);  
+      digitalWrite(REVERSE, LOW);   // turn the LED on (HIGH is the voltage level) 
+      delay(1000); 
+    }
+    oneTimeSim = false;
+  }
+  
+  if(digitalRead(triggerSimulation) == LOW)
+    oneTimeSim = true;
+} 
